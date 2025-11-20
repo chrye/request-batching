@@ -40,29 +40,39 @@ namespace TaxIQExtraction
 
             Console.WriteLine("=== Azure OpenAI Optimized Throughput Load Test ===\n");
 
-            // Ask for which test option that I want to run
-            Console.WriteLine("Select Test Option:");
-            Console.WriteLine("  1. Run all tests at once");
-            Console.WriteLine("  2. Run Fixed Batch Size Load Test");
-            Console.WriteLine("  3. Optimized Throughput Load Test");
-            Console.WriteLine("  4. Dynamic Batching Load Test");
-            Console.Write("Enter option number (default 1): ");
-
-            var optionInput = Console.ReadLine();
-
-            // Default to option 1 if no input
-            optionInput = string.IsNullOrWhiteSpace(optionInput) ? "1" : optionInput;
-            await (optionInput switch
+            while (true)
             {
-                "1" => RunStraightLoadTest(prompt, endpoint, apiKey, deploymentName),
+                // Ask for which test option that I want to run
+                Console.WriteLine("\nSelect Test Option:");
+                Console.WriteLine("  1. Run all tests at once");
+                Console.WriteLine("  2. Run Fixed Batch Size Load Test");
+                Console.WriteLine("  3. Optimized Throughput Load Test");
+                Console.WriteLine("  4. Dynamic Batching Load Test");
+                Console.WriteLine("  0. Exit");
+                Console.Write("Enter option number (default 1): ");
 
-                // Add other cases as needed
+                var optionInput = Console.ReadLine();
 
-                "2" => RunFixedBatchSizeLoadTest(prompt, endpoint, apiKey, deploymentName),
-                "3" => RunOptimizedThroughputLoadTest(prompt, endpoint, apiKey, deploymentName),
-                "4" => RunDynamicBatchingLoadTest(prompt, endpoint, apiKey, deploymentName),
-                _ => RunStraightLoadTest(prompt, endpoint, apiKey, deploymentName),
-            });
+                // Default to option 1 if no input
+                optionInput = string.IsNullOrWhiteSpace(optionInput) ? "1" : optionInput;
+
+                if (optionInput == "0")
+                {
+                    Console.WriteLine("Exiting...");
+                    break;
+                }
+
+                await (optionInput switch
+                {
+                    "1" => RunStraightLoadTest(prompt, endpoint, apiKey, deploymentName),
+                    "2" => RunFixedBatchSizeLoadTest(prompt, endpoint, apiKey, deploymentName),
+                    "3" => RunOptimizedThroughputLoadTest(prompt, endpoint, apiKey, deploymentName),
+                    "4" => RunDynamicBatchingLoadTest(prompt, endpoint, apiKey, deploymentName),
+                    _ => RunStraightLoadTest(prompt, endpoint, apiKey, deploymentName),
+                });
+
+                Console.WriteLine("\n" + new string('=', 60));
+            }
         }
 
         static async Task RunStraightLoadTest(string prompt, string endpoint, string apiKey, string deploymentName)
